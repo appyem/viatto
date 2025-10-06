@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 
 // Pantalla 1: Bienvenida
 const WelcomeScreen = ({ onNext }) => {
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center p-2">
-      <div className="relative w-full max-w-md">
+    <div className="min-h-screen bg-white flex items-center justify-center p-2 overflow-hidden">
+      <div className="relative w-full max-w-md mx-auto">
         <img
           src="https://github.com/appyem/imagenes-viatto/raw/main/BIENVENIDA.JPEG"
           alt="Pantalla de bienvenida"
-          className="w-full h-auto rounded-xl"
+          className="w-full h-auto max-w-full rounded-xl"
         />
         <button
           onClick={onNext}
-          className="absolute bottom-4 left-1/2 transform -translate-x-1/2 px-8 py-3 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full text-white font-medium text-lg shadow-lg hover:bg-white/30 transition-all duration-300 hover:scale-105"
+          className="absolute bottom-4 left-1/2 transform -translate-x-1/2 px-6 py-2 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full text-white font-medium text-base shadow-lg hover:bg-white/30 transition-all duration-300"
         >
           Descubre
         </button>
@@ -32,12 +32,12 @@ const ColombiaScreen = ({ onRegionSelect }) => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center p-2">
-      <div className="relative w-full max-w-md">
+    <div className="min-h-screen bg-white flex items-center justify-center p-2 overflow-hidden">
+      <div className="relative w-full max-w-md mx-auto">
         <img
           src="https://github.com/appyem/imagenes-viatto/raw/main/COLOMBIA.JPEG"
           alt="Mapa de Colombia"
-          className="w-full h-auto rounded-xl"
+          className="w-full h-auto max-w-full rounded-xl"
         />
         {Object.entries(regions).map(([region, config]) => (
           <button
@@ -62,16 +62,16 @@ const ColombiaScreen = ({ onRegionSelect }) => {
 // Pantalla de Antioquia
 const AntioquiaScreen = ({ onBack }) => {
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center p-2">
-      <div className="relative w-full max-w-md">
+    <div className="min-h-screen bg-white flex items-center justify-center p-2 overflow-hidden">
+      <div className="relative w-full max-w-md mx-auto">
         <img
           src="https://github.com/appyem/imagenes-viatto/raw/main/ANTIOQUIA.JPEG"
           alt="Mapa de Antioquia"
-          className="w-full h-auto rounded-xl"
+          className="w-full h-auto max-w-full rounded-xl"
         />
         <button
           onClick={onBack}
-          className="absolute bottom-4 left-1/2 transform -translate-x-1/2 px-8 py-3 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full text-white font-medium text-lg shadow-lg hover:bg-white/30 transition-all duration-300 hover:scale-105"
+          className="absolute bottom-4 left-1/2 transform -translate-x-1/2 px-6 py-2 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full text-white font-medium text-base shadow-lg hover:bg-white/30 transition-all duration-300"
         >
           Regreso
         </button>
@@ -89,12 +89,12 @@ const CaldasScreen = ({ onMunicipalitySelect, onBack }) => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center p-2">
-      <div className="relative w-full max-w-md">
+    <div className="min-h-screen bg-white flex items-center justify-center p-2 overflow-hidden">
+      <div className="relative w-full max-w-md mx-auto">
         <img
           src="https://github.com/appyem/imagenes-viatto/raw/main/CALDAS.JPEG"
           alt="Mapa de Caldas"
-          className="w-full h-auto rounded-xl"
+          className="w-full h-auto max-w-full rounded-xl"
         />
         {Object.entries(municipalities).map(([municipality, config]) => (
           <button
@@ -113,7 +113,7 @@ const CaldasScreen = ({ onMunicipalitySelect, onBack }) => {
         ))}
         <button
           onClick={onBack}
-          className="absolute bottom-4 left-1/2 transform -translate-x-1/2 px-8 py-3 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full text-white font-medium text-lg shadow-lg hover:bg-white/30 transition-all duration-300 hover:scale-105"
+          className="absolute bottom-4 left-1/2 transform -translate-x-1/2 px-6 py-2 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full text-white font-medium text-base shadow-lg hover:bg-white/30 transition-all duration-300"
         >
           Regreso
         </button>
@@ -131,12 +131,12 @@ const RisaraldaScreen = ({ onMunicipalitySelect, onBack }) => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center p-2">
-      <div className="relative w-full max-w-md">
+    <div className="min-h-screen bg-white flex items-center justify-center p-2 overflow-hidden">
+      <div className="relative w-full max-w-md mx-auto">
         <img
           src="https://github.com/appyem/imagenes-viatto/raw/main/risaralda.jpeg"
           alt="Mapa de Risaralda"
-          className="w-full h-auto rounded-xl"
+          className="w-full h-auto max-w-full rounded-xl"
         />
         {Object.entries(municipalities).map(([municipality, config]) => (
           <button
@@ -155,7 +155,7 @@ const RisaraldaScreen = ({ onMunicipalitySelect, onBack }) => {
         ))}
         <button
           onClick={onBack}
-          className="absolute bottom-4 left-1/2 transform -translate-x-1/2 px-8 py-3 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full text-white font-medium text-lg shadow-lg hover:bg-white/30 transition-all duration-300 hover:scale-105"
+          className="absolute bottom-4 left-1/2 transform -translate-x-1/2 px-6 py-2 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full text-white font-medium text-base shadow-lg hover:bg-white/30 transition-all duration-300"
         >
           Regreso
         </button>
@@ -175,12 +175,12 @@ const QuindioScreen = ({ onMunicipalitySelect, onBack }) => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center p-2">
-      <div className="relative w-full max-w-md">
+    <div className="min-h-screen bg-white flex items-center justify-center p-2 overflow-hidden">
+      <div className="relative w-full max-w-md mx-auto">
         <img
           src="https://github.com/appyem/imagenes-viatto/raw/main/quindio.jpeg"
           alt="Mapa de Quindío"
-          className="w-full h-auto rounded-xl"
+          className="w-full h-auto max-w-full rounded-xl"
         />
         {Object.entries(municipalities).map(([municipality, config]) => (
           <button
@@ -199,7 +199,7 @@ const QuindioScreen = ({ onMunicipalitySelect, onBack }) => {
         ))}
         <button
           onClick={onBack}
-          className="absolute bottom-4 left-1/2 transform -translate-x-1/2 px-8 py-3 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full text-white font-medium text-lg shadow-lg hover:bg-white/30 transition-all duration-300 hover:scale-105"
+          className="absolute bottom-4 left-1/2 transform -translate-x-1/2 px-6 py-2 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full text-white font-medium text-base shadow-lg hover:bg-white/30 transition-all duration-300"
         >
           Regreso
         </button>
@@ -216,12 +216,12 @@ const TolimaScreen = ({ onMunicipalitySelect, onBack }) => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center p-2">
-      <div className="relative w-full max-w-md">
+    <div className="min-h-screen bg-white flex items-center justify-center p-2 overflow-hidden">
+      <div className="relative w-full max-w-md mx-auto">
         <img
           src="https://github.com/appyem/imagenes-viatto/raw/main/tolima.jpeg"
           alt="Mapa de Tolima"
-          className="w-full h-auto rounded-xl"
+          className="w-full h-auto max-w-full rounded-xl"
         />
         {Object.entries(municipalities).map(([municipality, config]) => (
           <button
@@ -240,7 +240,7 @@ const TolimaScreen = ({ onMunicipalitySelect, onBack }) => {
         ))}
         <button
           onClick={onBack}
-          className="absolute bottom-4 left-1/2 transform -translate-x-1/2 px-8 py-3 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full text-white font-medium text-lg shadow-lg hover:bg-white/30 transition-all duration-300 hover:scale-105"
+          className="absolute bottom-4 left-1/2 transform -translate-x-1/2 px-6 py-2 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full text-white font-medium text-base shadow-lg hover:bg-white/30 transition-all duration-300"
         >
           Regreso
         </button>
@@ -284,13 +284,13 @@ export default function App() {
     default:
       // Pantallas de municipios (aún no implementadas, mostrar mensaje temporal)
       return (
-        <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
-          <div className="text-center">
+        <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4 overflow-hidden">
+          <div className="text-center max-w-md mx-auto">
             <h2 className="text-xl font-bold mb-4">Pantalla de {currentScreen}</h2>
             <p className="text-gray-600 mb-6">Esta pantalla se implementará cuando proporciones las imágenes del municipio.</p>
             <button
               onClick={goBack}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-base"
             >
               Regreso
             </button>
