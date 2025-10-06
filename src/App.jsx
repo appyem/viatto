@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 
 // Pantalla 1: Bienvenida
 const WelcomeScreen = ({ onNext }) => {
