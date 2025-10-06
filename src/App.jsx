@@ -1,4 +1,19 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useState, useEffect } from 'react';
+
+// Función para resetear el zoom al cambiar de pantalla
+const resetZoomOnScreenChange = () => {
+  const meta = document.querySelector('meta[name="viewport"]');
+  if (meta) {
+    // Viewport que permite zoom pero resetea al cambiar de pantalla
+    const zoomEnabledViewport = 'width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes';
+    meta.setAttribute('content', zoomEnabledViewport);
+    
+    // Forzar reset en iOS (hack necesario)
+    setTimeout(() => {
+      meta.setAttribute('content', zoomEnabledViewport);
+    }, 50);
+  }
+};
 
 // Pantalla 1: Bienvenida
 const WelcomeScreen = ({ onNext }) => {
@@ -254,6 +269,11 @@ export default function App() {
   const [screenHistory, setScreenHistory] = useState(['welcome']);
 
   const currentScreen = screenHistory[screenHistory.length - 1];
+
+  // ✅ SOLUCIÓN CLAVE: Resetear zoom cada vez que cambia la pantalla
+  useEffect(() => {
+    resetZoomOnScreenChange();
+  }, [currentScreen]);
 
   const goToScreen = (screen) => {
     setScreenHistory(prev => [...prev, screen]);
