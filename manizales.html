@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Viatto App - Manizales</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #A67C52;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            touch-action: manipulation;
+            position: relative;
+        }
+        
+        #map {
+            flex: 1;
+            width: 100%;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .filter-bar {
+            height: 50%;
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+            background: #A67C52;
+            gap: 12px;
+        }
+        
+        .search-container {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        #search-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            color: #5D4037;
+            outline: none;
+        }
+        
+        .buttons-container {
+            display: flex;
+            justify-content: space-around;
+            gap: 10px;
+        }
+        
+        .filter-btn {
+            flex: 1;
+            min-width: 70px;
+            height: 55px;
+            border: none;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: #5D4037;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(10px);
+        }
+        
+        .filter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .filter-btn.active {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
+        }
+        
+        .icon {
+            font-size: 24px;
+            margin-bottom: 4px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        /* Modal de detalles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        
+        .modal-content {
+            background: white;
+            margin: 20px auto;
+            max-width: 500px;
+            border-radius: 20px;
+            overflow: hidden;
+            animation: slideUp 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .modal-header {
+            padding: 20px;
+            background: #A67C52;
+            color: white;
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .modal-location {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .gallery {
+            display: flex;
+            height: 200px;
+            overflow-x: auto;
+            background: #f5f5f5;
+        }
+        
+        .gallery img {
+            min-width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 10px 0;
+        }
+        
+        .stars {
+            color: #f59e0b;
+            font-size: 18px;
+        }
+        
+        .reviews {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .price {
+            font-size: 18px;
+            font-weight: bold;
+            color: #22c55e;
+            margin: 10px 0;
+        }
+        
+        .description {
+            color: #555;
+            line-height: 1.5;
+            margin: 15px 0;
+        }
+        
+        .hours {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 12px;
+            margin: 15px 0;
+        }
+        
+        .hours-title {
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: #5D4037;
+        }
+        
+        .social-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        
+        .social-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        
+        .whatsapp { background: #25D366; }
+        .instagram { background: #E1306C; }
+        .facebook { background: #1877F2; }
+        
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        
+        @media (max-width: 380px) {
+            .filter-btn {
+                height: 50px;
+                font-size: 10px;
+            }
+            .icon {
+                font-size: 20px;
+            }
+            .modal-content {
+                margin: 10px auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    
+    <div class="filter-bar">
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Buscar lugares...">
+        </div>
+        <div class="buttons-container">
+            <button class="filter-btn active" data-category="todas">
+                <span class="icon">🌟</span>
+                <span>Todos</span>
+            </button>
+            <button class="filter-btn" data-category="actividades">
+                <span class="icon">🎯</span>
+                <span>Actividades</span>
+            </button>
+            <button class="filter-btn" data-category="hoteleria">
+                <span class="icon">🏨</span>
+                <span>Hotelería</span>
+            </button>
+            <button class="filter-btn" data-category="gastronomia">
+                <span class="icon">🍲</span>
+                <span>Gastronomía</span>
+            </button>
+            <button class="filter-btn" data-category="destacados">
+                <span class="icon">🔥</span>
+                <span>Destacados</span>
+            </button>
+        </div>
+    </div>
+
+    <div id="detail-modal" class="modal">
+        <button class="close-btn" onclick="closeModal()">&times;</button>
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title">Título</div>
+                <div class="modal-location" id="modal-location">Ubicación</div>
+            </div>
+            <div class="gallery" id="modal-gallery"></div>
+            <div class="modal-body">
+                <div class="rating">
+                    <div class="stars" id="modal-stars">⭐⭐⭐⭐⭐</div>
+                    <div class="reviews" id="modal-reviews">120 reseñas</div>
+                </div>
+                <div class="price" id="modal-price">Desde $150.000 COP</div>
+                <div class="description" id="modal-description">
+                    Descripción detallada del lugar con información completa sobre servicios, ambiente y experiencias.
+                </div>
+                <div class="hours">
+                    <div class="hours-title">Horarios de Atención</div>
+                    <div id="modal-hours">Lunes a Domingo: 8:00 AM - 10:00 PM</div>
+                </div>
+                <div class="social-buttons" id="social-buttons">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <script>
+        const lugares = [
+            {
+                id: 1,
+                nombre: "Parque del Café",
+                ubicacion: "Montenegro, Quindío",
+                lat: 5.0712,
+                lng: -75.5231,
+                categoria: "actividades",
+                calificacion: 4.8,
+                reseñas: 1250,
+                precio: "$85.000 COP",
+                descripcion: "Parque temático dedicado al café colombiano con atracciones, shows culturales y recorridos educativos sobre el proceso del café.",
+                horarios: "Martes a Domingo: 9:00 AM - 6:00 PM",
+                imagenes: [
+                    "https://images.unsplash.com/photo-1503435999751-356a5d0c0f5d?w=600&h=400&fit=crop",
+                    "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=600&h=400&fit=crop",
+                    "https://images.unsplash.com/photo-1476820865390-c52aeebb9891?w=600&h=400&fit=crop"
+                ],
+                redes: {
+                    whatsapp: "https://wa.me/?text=Hola%20Parque%20del%20Café",
+                    instagram: "https://instagram.com/parquedelcafe",
+                    facebook: "https://facebook.com/parquedelcafeoficial"
+                }
+            },
+            {
+                id: 2,
+                nombre: "Cable Aéreo Manizales",
+                ubicacion: "Manizales, Caldas",
+                lat: 5.0654,
+                lng: -75.5189,
+                categoria: "actividades",
+                calificacion: 4.6,
+                reseñas: 890,
+                precio: "$45.000 COP",
+                descripcion: "Teleférico que conecta Manizales con Villamaría ofreciendo vistas panorámicas espectaculares de la región cafetera y los volcanes cercanos.",
+                horarios: "Lunes a Domingo: 8:00 AM - 6:00 PM",
+                imagenes: [
+                    "https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?w=600&h=400&fit=crop",
+                    "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=600&h=400&fit=crop",
+                    "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=600&h=400&fit=crop"
+                ],
+                redes: {
+                    whatsapp: "https://wa.me/?text=Hola%20Cable%20Aéreo%20Manizales",
+                    instagram: "https://instagram.com/cableaereomanizales",
+                    facebook: "https://facebook.com/cableaereomanizales"
+                }
+            },
+            {
+                id: 3,
+                nombre: "Hotel Sazagua",
+                ubicacion: "Pereira, Risaralda",
+                lat: 5.0698,
+                lng: -75.5167,
+                categoria: "hoteleria",
+                calificacion: 4.9,
+                reseñas: 450,
+                precio: "$320.000 COP",
+                descripcion: "Hotel boutique de lujo con spa, restaurante gourmet y habitaciones con vista al jardín botánico. Experiencia premium en la región cafetera.",
+                horarios: "Recepción 24 horas",
+                imagenes: [
+                    "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&h=400&fit=crop",
+                    "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=600&h=400&fit=crop",
+                    "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=600&h=400&fit=crop"
+                ],
+                redes: {
+                    whatsapp: "https://wa.me/?text=Hola%20Hotel%20Sazagua",
+                    instagram: "https://instagram.com/hotelsazagua",
+                    facebook: "https://facebook.com/hotelsazagua"
+                }
+            },
+            {
+                id: 4,
+                nombre: "Restaurante El Cedral",
+                ubicacion: "Manizales, Caldas",
+                lat: 5.0685,
+                lng: -75.5170,
+                categoria: "gastronomia",
+                calificacion: 4.7,
+                reseñas: 280,
+                precio: "$65.000 COP",
+                descripcion: "Restaurante tradicional colombiano especializado en bandeja paisa y platos típicos de la región cafetera con ingredientes locales frescos.",
+                horarios: "Martes a Domingo: 12:00 PM - 10:00 PM",
+                imagenes: [
+                    "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&h=400&fit=crop",
+                    "https://images.unsplash.com/photo-1414235077428-338989a9a7c4?w=600&h=400&fit=crop",
+                    "https://images.unsplash.com/photo-1555396273-36792876374d?w=600&h=400&fit=crop"
+                ],
+                redes: {
+                    whatsapp: "https://wa.me/?text=Hola%20Restaurante%20El%20Cedral",
+                    instagram: "https://instagram.com/elcedralmanizales",
+                    facebook: "https://facebook.com/elcedralmanizales"
+                }
+            },
+            {
+                id: 5,
+                nombre: "Catedral Basílica",
+                ubicacion: "Manizales, Caldas",
+                lat: 5.0695,
+                lng: -75.5178,
+                categoria: "destacados",
+                calificacion: 4.8,
+                reseñas: 1800,
+                precio: "Gratis",
+                descripcion: "Impresionante catedral gótica con una de las torres más altas de Sudamérica y vistas panorámicas de la ciudad de Manizales.",
+                horarios: "Lunes a Domingo: 7:00 AM - 7:00 PM",
+                imagenes: [
+                    "https://images.unsplash.com/photo-1589998059171-988d887df646?w=600&h=400&fit=crop",
+                    "https://images.unsplash.com/photo-1513829597120-77a3b5a6c6f9?w=600&h=400&fit=crop",
+                    "https://images.unsplash.com/photo-1513831153736-d8a8a807e746?w=600&h=400&fit=crop"
+                ],
+                redes: {
+                    whatsapp: "https://wa.me/?text=Hola%20Catedral%20Basílica",
+                    instagram: "https://instagram.com/catedralmanizales",
+                    facebook: "https://facebook.com/catedralbasilicamanizales"
+                }
+            }
+        ];
+
+        const map = L.map('map').setView([5.0689, -75.5174], 13);
+        
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+        
+        // Iconos mejorados que resaltan en el mapa
+        const createIcon = (emoji) => {
+            return L.divIcon({
+                html: `
+                    <div style="
+                        background: white;
+                        border: 2px solid #A67C52;
+                        border-radius: 50%;
+                        width: 36px;
+                        height: 36px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+                        font-size: 20px;
+                    ">
+                        ${emoji}
+                    </div>
+                `,
+                className: '',
+                iconSize: [36, 36],
+                iconAnchor: [18, 36]
+            });
+        };
+        
+        const iconos = {
+            actividades: "🎯",
+            hoteleria: "🏨",
+            gastronomia: "🍲",
+            destacados: "🔥"
+        };
+        
+        let allMarkers = [];
+        let currentMarkers = [];
+        let activeCategory = "todas";
+        
+        function createAllMarkers() {
+            allMarkers = [];
+            lugares.forEach(lugar => {
+                const icon = createIcon(iconos[lugar.categoria]);
+                const marker = L.marker([lugar.lat, lugar.lng], { icon: icon });
+                marker.lugarData = lugar;
+                marker.bindPopup(createPopup(lugar));
+                allMarkers.push(marker);
+            });
+            showMarkers("todas");
+        }
+        
+        function createPopup(lugar) {
+            const stars = '⭐'.repeat(Math.floor(lugar.calificacion)) + '☆'.repeat(5 - Math.floor(lugar.calificacion));
+            return `
+                <div style="min-width: 200px;">
+                    <div style="font-weight: bold; margin-bottom: 6px;">${lugar.nombre}</div>
+                    <div style="font-size: 12px; color: #666; margin-bottom: 8px;">${lugar.ubicacion}</div>
+                    <div style="color: #f59e0b; margin-bottom: 6px;">${stars}</div>
+                    <div style="font-size: 12px; color: #666; margin-bottom: 10px;">${lugar.reseñas} reseñas</div>
+                    <button onclick="showDetails(${lugar.id})" style="background: #A67C52; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer;">
+                        Ver más
+                    </button>
+                </div>
+            `;
+        }
+        
+        function showMarkers(category) {
+            currentMarkers.forEach(marker => map.removeLayer(marker));
+            
+            if (category === "todas") {
+                currentMarkers = [...allMarkers];
+            } else {
+                currentMarkers = allMarkers.filter(marker => marker.lugarData.categoria === category);
+            }
+            
+            currentMarkers.forEach(marker => map.addLayer(marker));
+            applySearch();
+            
+            if (currentMarkers.length > 0) {
+                const group = L.featureGroup(currentMarkers);
+                map.fitBounds(group.getBounds().pad(0.15));
+            }
+        }
+        
+        function applySearch() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            currentMarkers.forEach(marker => {
+                const visible = searchTerm === '' || 
+                    marker.lugarData.nombre.toLowerCase().includes(searchTerm) ||
+                    marker.lugarData.ubicacion.toLowerCase().includes(searchTerm);
+                if (visible) {
+                    if (!map.hasLayer(marker)) {
+                        map.addLayer(marker);
+                    }
+                } else {
+                    if (map.hasLayer(marker)) {
+                        map.removeLayer(marker);
+                    }
+                }
+            });
+        }
+        
+        window.showDetails = function(lugarId) {
+            const lugar = lugares.find(l => l.id === lugarId);
+            if (!lugar) return;
+            
+            document.getElementById('modal-title').textContent = lugar.nombre;
+            document.getElementById('modal-location').textContent = lugar.ubicacion;
+            
+            const fullStars = Math.floor(lugar.calificacion);
+            const stars = '⭐'.repeat(fullStars) + '☆'.repeat(5 - fullStars);
+            document.getElementById('modal-stars').textContent = stars;
+            document.getElementById('modal-reviews').textContent = `${lugar.reseñas} reseñas`;
+            document.getElementById('modal-price').textContent = `Desde ${lugar.precio}`;
+            document.getElementById('modal-description').textContent = lugar.descripcion;
+            document.getElementById('modal-hours').textContent = lugar.horarios;
+            
+            const gallery = document.getElementById('modal-gallery');
+            gallery.innerHTML = lugar.imagenes.map(img => 
+                `<img src="${img}" alt="${lugar.nombre}" loading="lazy">`
+            ).join('');
+            
+            const socialButtons = document.getElementById('social-buttons');
+            socialButtons.innerHTML = `
+                <a href="${lugar.redes.whatsapp}" target="_blank" class="social-btn whatsapp">WhatsApp</a>
+                <a href="${lugar.redes.instagram}" target="_blank" class="social-btn instagram">Instagram</a>
+                <a href="${lugar.redes.facebook}" target="_blank" class="social-btn facebook">Facebook</a>
+            `;
+            
+            document.getElementById('detail-modal').style.display = 'block';
+        };
+        
+        window.closeModal = function() {
+            document.getElementById('detail-modal').style.display = 'none';
+        };
+        
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                activeCategory = btn.dataset.category;
+                showMarkers(activeCategory);
+            });
+        });
+        
+        document.getElementById('search-input').addEventListener('input', applySearch);
+        
+        createAllMarkers();
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
